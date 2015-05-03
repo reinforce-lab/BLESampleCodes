@@ -1,0 +1,374 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F834ECAF1ADE88ED003B5D25 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = F834ECAE1ADE88ED003B5D25 /* main.swift */; };
+		F834ECBF1ADE8938003B5D25 /* BluetoothUSBAdaptor.m in Sources */ = {isa = PBXBuildFile; fileRef = F834ECB71ADE8938003B5D25 /* BluetoothUSBAdaptor.m */; };
+		F834ECC01ADE8938003B5D25 /* HCICommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = F834ECB91ADE8938003B5D25 /* HCICommand.swift */; };
+		F834ECC11ADE8938003B5D25 /* HCIErrorCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F834ECBA1ADE8938003B5D25 /* HCIErrorCodes.swift */; };
+		F834ECC21ADE8938003B5D25 /* HCIEventCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F834ECBB1ADE8938003B5D25 /* HCIEventCode.swift */; };
+		F834ECC31ADE8938003B5D25 /* HCISocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = F834ECBC1ADE8938003B5D25 /* HCISocket.swift */; };
+		F834ECDA1ADE8C8D003B5D25 /* USBAdaptorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F834ECD91ADE8C8D003B5D25 /* USBAdaptorTest.swift */; };
+		F83B51B31AE8E412008D8CE3 /* HCIEventLEMetaEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F83B51B21AE8E412008D8CE3 /* HCIEventLEMetaEvent.swift */; };
+		F83B51B51AE937F0008D8CE3 /* ConnectionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F83B51B41AE937F0008D8CE3 /* ConnectionTest.swift */; };
+		F83B51B71AE93810008D8CE3 /* HCLACLDataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = F83B51B61AE93810008D8CE3 /* HCLACLDataPacket.swift */; };
+		F83B51B91AE93FC8008D8CE3 /* L2CAPFrameFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F83B51B81AE93FC8008D8CE3 /* L2CAPFrameFactory.swift */; };
+		F83B51BC1AE93FF8008D8CE3 /* L2CAPSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = F83B51BB1AE93FF8008D8CE3 /* L2CAPSocket.swift */; };
+		F83B51BE1AEC97F6008D8CE3 /* AttributeProtocolPDU.swift in Sources */ = {isa = PBXBuildFile; fileRef = F83B51BD1AEC97F6008D8CE3 /* AttributeProtocolPDU.swift */; };
+		F83B51C01AEE14AC008D8CE3 /* GATTServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F83B51BF1AEE14AC008D8CE3 /* GATTServer.swift */; };
+		F83B51C21AEE4830008D8CE3 /* AttributeRepresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F83B51C11AEE4830008D8CE3 /* AttributeRepresentation.swift */; };
+		F83B51C41AEE7490008D8CE3 /* BleUUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = F83B51C31AEE7490008D8CE3 /* BleUUID.swift */; };
+		F83B51C61AF0B6AC008D8CE3 /* BatteryLevelServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F83B51C51AF0B6AC008D8CE3 /* BatteryLevelServiceTest.swift */; };
+		F855E7B01AE13D29009A56B3 /* AdvertisingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F855E7AF1AE13D29009A56B3 /* AdvertisingTest.swift */; };
+		F89989C31AE33B82003DD690 /* HCIEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F89989C21AE33B82003DD690 /* HCIEvent.swift */; };
+		F89989C71AE33CEB003DD690 /* HCIEventCommandComplete.swift in Sources */ = {isa = PBXBuildFile; fileRef = F89989C61AE33CEB003DD690 /* HCIEventCommandComplete.swift */; };
+		F89989C91AE48431003DD690 /* HCIEventParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F89989C81AE48431003DD690 /* HCIEventParser.swift */; };
+		F89989CB1AE4A048003DD690 /* HCIEventCommandStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F89989CA1AE4A048003DD690 /* HCIEventCommandStatus.swift */; };
+		F89989CF1AE87A72003DD690 /* TestBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F89989CE1AE87A72003DD690 /* TestBase.swift */; };
+		F8ADD2FA1AF4BD890054BBEC /* CustomServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8ADD2F91AF4BD890054BBEC /* CustomServiceTest.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F834ECA91ADE88ED003B5D25 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		F834ECAB1ADE88ED003B5D25 /* BLETests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = BLETests; sourceTree = BUILT_PRODUCTS_DIR; };
+		F834ECAE1ADE88ED003B5D25 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = main.swift; path = BLETests/main.swift; sourceTree = "<group>"; };
+		F834ECB51ADE8937003B5D25 /* BLETests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BLETests-Bridging-Header.h"; sourceTree = "<group>"; };
+		F834ECB61ADE8938003B5D25 /* BluetoothUSBAdaptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BluetoothUSBAdaptor.h; sourceTree = "<group>"; };
+		F834ECB71ADE8938003B5D25 /* BluetoothUSBAdaptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BluetoothUSBAdaptor.m; sourceTree = "<group>"; };
+		F834ECB91ADE8938003B5D25 /* HCICommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCICommand.swift; sourceTree = "<group>"; };
+		F834ECBA1ADE8938003B5D25 /* HCIErrorCodes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCIErrorCodes.swift; sourceTree = "<group>"; };
+		F834ECBB1ADE8938003B5D25 /* HCIEventCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCIEventCode.swift; sourceTree = "<group>"; };
+		F834ECBC1ADE8938003B5D25 /* HCISocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCISocket.swift; sourceTree = "<group>"; };
+		F834ECBE1ADE8938003B5D25 /* memo.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = memo.txt; sourceTree = "<group>"; };
+		F834ECD91ADE8C8D003B5D25 /* USBAdaptorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = USBAdaptorTest.swift; path = BLETests/USBAdaptorTest.swift; sourceTree = "<group>"; };
+		F83B51B21AE8E412008D8CE3 /* HCIEventLEMetaEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCIEventLEMetaEvent.swift; sourceTree = "<group>"; };
+		F83B51B41AE937F0008D8CE3 /* ConnectionTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConnectionTest.swift; path = BLETests/ConnectionTest.swift; sourceTree = "<group>"; };
+		F83B51B61AE93810008D8CE3 /* HCLACLDataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCLACLDataPacket.swift; sourceTree = "<group>"; };
+		F83B51B81AE93FC8008D8CE3 /* L2CAPFrameFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = L2CAPFrameFactory.swift; sourceTree = "<group>"; };
+		F83B51BB1AE93FF8008D8CE3 /* L2CAPSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = L2CAPSocket.swift; sourceTree = "<group>"; };
+		F83B51BD1AEC97F6008D8CE3 /* AttributeProtocolPDU.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributeProtocolPDU.swift; sourceTree = "<group>"; };
+		F83B51BF1AEE14AC008D8CE3 /* GATTServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTServer.swift; sourceTree = "<group>"; };
+		F83B51C11AEE4830008D8CE3 /* AttributeRepresentation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributeRepresentation.swift; sourceTree = "<group>"; };
+		F83B51C31AEE7490008D8CE3 /* BleUUID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BleUUID.swift; sourceTree = "<group>"; };
+		F83B51C51AF0B6AC008D8CE3 /* BatteryLevelServiceTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BatteryLevelServiceTest.swift; sourceTree = "<group>"; };
+		F855E7AF1AE13D29009A56B3 /* AdvertisingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AdvertisingTest.swift; path = BLETests/AdvertisingTest.swift; sourceTree = "<group>"; };
+		F89989C21AE33B82003DD690 /* HCIEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCIEvent.swift; sourceTree = "<group>"; };
+		F89989C61AE33CEB003DD690 /* HCIEventCommandComplete.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCIEventCommandComplete.swift; sourceTree = "<group>"; };
+		F89989C81AE48431003DD690 /* HCIEventParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCIEventParser.swift; sourceTree = "<group>"; };
+		F89989CA1AE4A048003DD690 /* HCIEventCommandStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCIEventCommandStatus.swift; sourceTree = "<group>"; };
+		F89989CE1AE87A72003DD690 /* TestBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TestBase.swift; path = BLETests/TestBase.swift; sourceTree = "<group>"; };
+		F8ADD2F91AF4BD890054BBEC /* CustomServiceTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomServiceTest.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F834ECA81ADE88ED003B5D25 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F834ECA21ADE88ED003B5D25 = {
+			isa = PBXGroup;
+			children = (
+				F834ECAE1ADE88ED003B5D25 /* main.swift */,
+				F834ECD81ADE8C5F003B5D25 /* Tests */,
+				F834ECAD1ADE88ED003B5D25 /* BLETests */,
+				F83B51BA1AE93FDA008D8CE3 /* L2CAP */,
+				F834ECAC1ADE88ED003B5D25 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F834ECAC1ADE88ED003B5D25 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F834ECAB1ADE88ED003B5D25 /* BLETests */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F834ECAD1ADE88ED003B5D25 /* BLETests */ = {
+			isa = PBXGroup;
+			children = (
+				F83B51B61AE93810008D8CE3 /* HCLACLDataPacket.swift */,
+				F83B51B81AE93FC8008D8CE3 /* L2CAPFrameFactory.swift */,
+				F83B51BD1AEC97F6008D8CE3 /* AttributeProtocolPDU.swift */,
+				F83B51C11AEE4830008D8CE3 /* AttributeRepresentation.swift */,
+				F83B51C31AEE7490008D8CE3 /* BleUUID.swift */,
+				F83B51BF1AEE14AC008D8CE3 /* GATTServer.swift */,
+				F89989C11AE33B6A003DD690 /* HCIEvents */,
+				F834ECB61ADE8938003B5D25 /* BluetoothUSBAdaptor.h */,
+				F834ECB71ADE8938003B5D25 /* BluetoothUSBAdaptor.m */,
+				F834ECB91ADE8938003B5D25 /* HCICommand.swift */,
+				F834ECBA1ADE8938003B5D25 /* HCIErrorCodes.swift */,
+				F834ECBC1ADE8938003B5D25 /* HCISocket.swift */,
+				F834ECBE1ADE8938003B5D25 /* memo.txt */,
+				F834ECB51ADE8937003B5D25 /* BLETests-Bridging-Header.h */,
+			);
+			path = BLETests;
+			sourceTree = "<group>";
+		};
+		F834ECD81ADE8C5F003B5D25 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F89989CE1AE87A72003DD690 /* TestBase.swift */,
+				F834ECD91ADE8C8D003B5D25 /* USBAdaptorTest.swift */,
+				F855E7AF1AE13D29009A56B3 /* AdvertisingTest.swift */,
+				F83B51B41AE937F0008D8CE3 /* ConnectionTest.swift */,
+				F83B51C51AF0B6AC008D8CE3 /* BatteryLevelServiceTest.swift */,
+				F8ADD2F91AF4BD890054BBEC /* CustomServiceTest.swift */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
+		F83B51BA1AE93FDA008D8CE3 /* L2CAP */ = {
+			isa = PBXGroup;
+			children = (
+				F83B51BB1AE93FF8008D8CE3 /* L2CAPSocket.swift */,
+			);
+			name = L2CAP;
+			path = BLETests;
+			sourceTree = "<group>";
+		};
+		F89989C11AE33B6A003DD690 /* HCIEvents */ = {
+			isa = PBXGroup;
+			children = (
+				F834ECBB1ADE8938003B5D25 /* HCIEventCode.swift */,
+				F89989C21AE33B82003DD690 /* HCIEvent.swift */,
+				F89989C61AE33CEB003DD690 /* HCIEventCommandComplete.swift */,
+				F89989CA1AE4A048003DD690 /* HCIEventCommandStatus.swift */,
+				F83B51B21AE8E412008D8CE3 /* HCIEventLEMetaEvent.swift */,
+				F89989C81AE48431003DD690 /* HCIEventParser.swift */,
+			);
+			name = HCIEvents;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F834ECAA1ADE88ED003B5D25 /* BLETests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F834ECB21ADE88ED003B5D25 /* Build configuration list for PBXNativeTarget "BLETests" */;
+			buildPhases = (
+				F834ECA71ADE88ED003B5D25 /* Sources */,
+				F834ECA81ADE88ED003B5D25 /* Frameworks */,
+				F834ECA91ADE88ED003B5D25 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BLETests;
+			productName = BLETests;
+			productReference = F834ECAB1ADE88ED003B5D25 /* BLETests */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F834ECA31ADE88ED003B5D25 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0630;
+				ORGANIZATIONNAME = AkihiroUehara;
+				TargetAttributes = {
+					F834ECAA1ADE88ED003B5D25 = {
+						CreatedOnToolsVersion = 6.3;
+					};
+				};
+			};
+			buildConfigurationList = F834ECA61ADE88ED003B5D25 /* Build configuration list for PBXProject "BLETests" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = F834ECA21ADE88ED003B5D25;
+			productRefGroup = F834ECAC1ADE88ED003B5D25 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F834ECAA1ADE88ED003B5D25 /* BLETests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F834ECA71ADE88ED003B5D25 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F855E7B01AE13D29009A56B3 /* AdvertisingTest.swift in Sources */,
+				F83B51B51AE937F0008D8CE3 /* ConnectionTest.swift in Sources */,
+				F83B51B91AE93FC8008D8CE3 /* L2CAPFrameFactory.swift in Sources */,
+				F83B51C61AF0B6AC008D8CE3 /* BatteryLevelServiceTest.swift in Sources */,
+				F89989C31AE33B82003DD690 /* HCIEvent.swift in Sources */,
+				F834ECAF1ADE88ED003B5D25 /* main.swift in Sources */,
+				F83B51C01AEE14AC008D8CE3 /* GATTServer.swift in Sources */,
+				F83B51C41AEE7490008D8CE3 /* BleUUID.swift in Sources */,
+				F89989C71AE33CEB003DD690 /* HCIEventCommandComplete.swift in Sources */,
+				F83B51BE1AEC97F6008D8CE3 /* AttributeProtocolPDU.swift in Sources */,
+				F834ECC01ADE8938003B5D25 /* HCICommand.swift in Sources */,
+				F834ECC21ADE8938003B5D25 /* HCIEventCode.swift in Sources */,
+				F834ECC11ADE8938003B5D25 /* HCIErrorCodes.swift in Sources */,
+				F83B51BC1AE93FF8008D8CE3 /* L2CAPSocket.swift in Sources */,
+				F83B51C21AEE4830008D8CE3 /* AttributeRepresentation.swift in Sources */,
+				F89989CB1AE4A048003DD690 /* HCIEventCommandStatus.swift in Sources */,
+				F834ECDA1ADE8C8D003B5D25 /* USBAdaptorTest.swift in Sources */,
+				F83B51B71AE93810008D8CE3 /* HCLACLDataPacket.swift in Sources */,
+				F89989CF1AE87A72003DD690 /* TestBase.swift in Sources */,
+				F834ECBF1ADE8938003B5D25 /* BluetoothUSBAdaptor.m in Sources */,
+				F89989C91AE48431003DD690 /* HCIEventParser.swift in Sources */,
+				F83B51B31AE8E412008D8CE3 /* HCIEventLEMetaEvent.swift in Sources */,
+				F8ADD2FA1AF4BD890054BBEC /* CustomServiceTest.swift in Sources */,
+				F834ECC31ADE8938003B5D25 /* HCISocket.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		F834ECB01ADE88ED003B5D25 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F834ECB11ADE88ED003B5D25 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		F834ECB31ADE88ED003B5D25 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "BLETests/BLETests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F834ECB41ADE88ED003B5D25 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "BLETests/BLETests-Bridging-Header.h";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F834ECA61ADE88ED003B5D25 /* Build configuration list for PBXProject "BLETests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F834ECB01ADE88ED003B5D25 /* Debug */,
+				F834ECB11ADE88ED003B5D25 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F834ECB21ADE88ED003B5D25 /* Build configuration list for PBXNativeTarget "BLETests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F834ECB31ADE88ED003B5D25 /* Debug */,
+				F834ECB41ADE88ED003B5D25 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F834ECA31ADE88ED003B5D25 /* Project object */;
+}

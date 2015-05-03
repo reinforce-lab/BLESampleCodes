@@ -1,0 +1,144 @@
+
+BLUETOOTH SPECIFICATION Version 4.2 [Vol 2, Part E] page 471
+Figure 5.1: HCI Command Packet
+
+
+// Command Complete Event 0x0e
+//  Num_HCI_Command_Packets 1oct.
+//      The number of HCI command packets which are allowed to be sent to the Controller from the Host.
+//  Command_Opcode 2 oct.
+//  Return_Parameter Depends on Command
+
+// Command Status Event 0x0f
+//  Status 1 oct.
+//      0x00        Command currently in pending
+//      0x01-0xFF   Command failed. PartD Error Codes on page 370, a list of error codes.
+//  Num_HCI_Command_Packets 1oct.
+//      The number of HCI command packets which are allowed to be sent to the Controller from the Host.
+//  Command
+//
+
+// Bluetooth Spec. ver4.2 Vol 2, Part E page 403
+//
+// ** Commands and Events **
+// Generic Events
+//  Command Complete Event  1.1
+//  Command Status Event    1.1
+//  Hardware Error Event    1.1
+//
+// Device Setup
+//  Reset Command           1.1
+//
+// Controller Flow Control
+//  Read Buffer Size Command            1.1
+//  Number Of Completed Packets Event   1.1
+//  LE Read Buffer Size Command         4.0
+//
+// Controller Information
+//  Read Local Version Information Command  1.1
+//  Read Local Supported Commands Command   1.2
+//  Read Local Supported Featuers Command   1.1
+//  Read BD_ADDR Command                    1.1
+//  LE Read Local Supported Features Command    4.0
+//  LE Read Supported Status Command            4.0
+//  Set MWS Channel Parameters Command          CSA3
+//  Set External Frame Confugration Command     CSA3
+//  Set MWS Signalighg Command                  CSA3
+//  Set MWS Transport Layer Command             CSA3
+//  Set MWS Transport Layer Configuration Command   CSA3
+//  Set MWS Scan Frequency Table Command            CSA3
+//  SET MWS_PATTERN Configuration Command           CSA3
+//  LE Read Maximum Data Length Command         4.2
+//
+// Controller Configuration
+//  LE Set Advertise Enable Command         4.0
+//  LE Set Advertising Data Command         4.0
+//  LE Set Advertising Parameters Command   4.0
+//  LE Set Rnadom Address Command           4.0
+//  LE Set Scan Response Data Command       4.0
+//  LE Set Resolvable Private Address Timeout Command   4.2
+//
+// Device Discovery
+//  LE Adverising Report Event      4.0
+//  LE Set Scan Enable Command      4.0
+//  LE Set Scan parameters Command  4.0
+//  LE Direct Advertising Report Event  4.2
+//  Disconnect Command                  1.1
+//  Disconnection Complete Event        1.1
+//  LE Connection Complete Event        4.0
+//  LE Create Connection Cancel Command 4.0
+//  LE Create Connection Command        4.0
+//  LE Enhanced Connection Complete Event 4.2
+//
+// Remote Information
+//  Read Remote Version Information Command         1.1
+//  Read Remote Version Information Complete Event  1.1
+//  LE Read Remote Used Features Command            4.0
+//  LE Read Remote Used Features Complete Event     4.0
+//  
+// Connection State
+//  LE Connection Update Command            4.0
+//  LE Connection Update Complete Event     4.0
+//  LE Remote Connection Parameter Request Reply Command    4.1
+//  LE Remote Connection Parameter Request Negative Replya Command  4.1
+//  LE Remote Connection Parameter Request Event    4.1
+//  LE Set Data Length Command   4.2
+//  LE Data Length Change Event  4.2
+//  LE Read Suggested Default Data Length Command   4.2
+//  LE Write Suggested Default Data Length Command  4.2
+//
+// Physical Links
+//  LE Set host Channel Classification Command  4.0
+//
+// Host Flow Control
+//  Host Buffer Size Command    1.1
+//  Set Event Mask Command      1.1
+//  Set Controller To Host Flow Control Command     1.1
+//  Host Number of Completed Packets Command        1.1
+//  Data Buffer Overflow Event                      1.1
+//  LE Add Device To White List Command             4.0
+//  LE Clear White List Command                     4.0
+//  LE Read White List Size Command                 4.0
+//  LE Remove Device From White List Command        4.0
+//  LE Set Event Mask Command                       4.0
+//  LE Add Device to Resolving List Command         4.2
+//  LE Remove Device From Resolving List Command    4.2
+// LE Clear Resolving List Command                  4.2
+// LE Read Resolving List Size Command              4.2
+// LE Read Peer Resolvable Address Command          4.2
+// LE Read Local Resolvable Address Command         4.2
+// LE Set Address Resolution Enable Command         4.2
+//
+// Link Information
+//  Read Transmit Power Level Command   1.1
+//  Read RSSI Command    1.1
+//  LE Read Advertising Channel Tx Power Command 4.0
+//  LE Read Channel Map Command 4.0
+//
+// Authentication and Encryption
+//  Encryption Change Event 1.1
+//  Encryption Key Refresh Complete Event    2.1+EDR
+//  LE Encrypt Command  4.0
+//  LE Long Term Key Request Event   4.0
+//  LE Long TermKey Request Reply Command   4.0
+//  LE Long Term Key Request Negative Reply Command 4.0
+//  LE Rand Command  4.0
+//  LE Start Encryption Command 4.0
+//  Write Authenticated Payload Timeout Commmand 4.1
+//  Read Authenticated Payload Timeout Command   4.1
+//  Authenticated Payload Timeout Expired Event 4.1
+//  LE Read Local P-256 Public Key Command      4.2
+//  LE Generate DHKey Command    4.2
+//  LE Read Local P-256 Public Key Complete Event   4.2
+//  Le Generate DHKey Complete Event    4.2
+//
+// Testing
+//  LE Receiver Test Command
+//  LE Transmitter Test Command
+//  LE Test End Command
+
+
+
+    
+    
+
