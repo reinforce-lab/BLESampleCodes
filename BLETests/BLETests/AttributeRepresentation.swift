@@ -166,14 +166,32 @@ enum CharacteristicConfigurationBits:UInt16 {
     
     func simpleDescription() -> String {
         switch self {
-            case .Notification: return "Notification"
-            case .Indication: return "Indication"
+        case .Notification: return "Notification"
+        case .Indication: return "Indication"
         }
     }
 }
 
 class ClientCharactristicConfigurationAttribute:AttributeRepresentation {
     var CharacteristicConfigurations:[CharacteristicConfigurationBits] = []
+    var _Value:[UInt8] = []
+    
+    override var Value:[UInt8] {
+        get {
+            return _Value
+        }
+        set(newValue) {
+            // ビット配列を更新
+            var val = UInt16(newValue[0]) | UInt16(newValue[1]) << 8
+            var bits:[CharacteristicConfigurationBits] = []
+            for bit:CharacteristicConfigurationBits in [.Notification, .Indication] {
+                if (bit.rawValue | val) != 0 {
+                    bits.append(bit)
+                }
+            }
+            CharacteristicConfigurations = bits
+        }
+    }
     
     init(handle:UInt16, CharacteristicConfigurations:[CharacteristicConfigurationBits]) {
         self.CharacteristicConfigurations = CharacteristicConfigurations
@@ -184,7 +202,7 @@ class ClientCharactristicConfigurationAttribute:AttributeRepresentation {
         }
         super.init(handle:handle, type:.ClientCharacteristicConfiguration, value:[UInt8(val & 0x00ff), UInt8(val >> 8)])
     }
-
+    
     override func simpleDescription() -> String {
         var cfgDesc = ""
         for cfg in CharacteristicConfigurations {

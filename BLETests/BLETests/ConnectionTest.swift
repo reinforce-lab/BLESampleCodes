@@ -8,9 +8,31 @@
 
 import Foundation
 
+// GAPのみの、最も単純なGATTサーバ
+class SimpleGATTServer:GATTServer {
+    override init() {
+        super.init()
+        
+        self.Database = [
+            // GATT Service (Generic Access Profile)
+            // see https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.generic_access.xml
+            PrimaryServiceAttribute(handle: 0x0001, uuid:BleUUID(bluetoothUUID: 0x1800)),
+            // Device Name, Mandatory
+            CharacteristicDeclarationAttribute(handle: 0x0002, properties:[.Read], valueHandle: 0x0003, uuid: BleUUID(bluetoothUUID: 0x2a00)),
+            // value:UTF-8 text (TESTDEV-1), アドバタイジングでは、shortened local name として"TESTDEV"を送信しています。ここでは完全な名前を送信しています。
+            // ほとんどの値が単1のIntなので、PDUにはリトル・エンディアンに変換しています。ですが、これではテキストは逆順になってしまうので、テキストだけはここで逆順にして格納しています
+            CharacteristicValueDeclarationAttribute(handle: 0x003, characteristicUUID: BleUUID(bluetoothUUID: 0x2a00), value:[0x54, 0x45, 0x53, 0x54, 0x44, 0x45, 0x56, 0x5f, 0x31] ),
+            // Appearance, Mandatory
+            CharacteristicDeclarationAttribute(handle: 0x0004, properties:[.Read], valueHandle: 0x0005, uuid: BleUUID(bluetoothUUID: 0x2a01)),
+            // value:unknown category (10-bit 0x00), sub-category (6-bit 0x00)
+            CharacteristicValueDeclarationAttribute(handle: 0x005, characteristicUUID: BleUUID(bluetoothUUID: 0x2a01), value:[0x00]),
+        ]
+    }
+}
+
 class ConnectionTest:TestBase {
     let l2capFrameFactory = L2CAPFrameFactory()
-    let gattServer = SimpleGATTServer()
+    let gattServer        = SimpleGATTServer()
     
     func test() -> () {
         // アドバタイジングを開始します

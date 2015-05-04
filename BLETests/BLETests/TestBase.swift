@@ -10,12 +10,15 @@ import Foundation
 
 // テストのベースクラス
 class TestBase {
-    let _adaptor:BluetoothUSBAdaptor
+//    let _adaptor:BluetoothUSBAdaptor
+    let _adaptor:libUSBWrapper
     let _socket:HCISocket
     
     init() {
-        _adaptor = BluetoothUSBAdaptor()
+//        _adaptor = BluetoothUSBAdaptor()
+        _adaptor = libUSBWrapper()
         _socket  = HCISocket(adaptor:_adaptor)
+
     }
     
     // 説明付きの、HCIコマンド送信ファンクション

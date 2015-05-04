@@ -67,9 +67,9 @@ enum AttributeOpcode:UInt8 {
         case .ErrorResponse:           return "ErrorResponse"
         case .ExchangeMTURequest:      return "ExchangeMTURequest"
         case .ExchangeMTUResponse:     return "ExchangeMTUResponse"
-        case .FindInformationRequest:  return "ExchangeMTURessponse"
-        case .FindInformationResponse: return "ExchangeMTURessponse"
-        case .FindByTypeValueRequest:  return "ExchangeMTURessponse"
+        case .FindInformationRequest:  return "FindInformationRequest"
+        case .FindInformationResponse: return "FindInformationResponse"
+        case .FindByTypeValueRequest:  return "FindByTypeValueRequest"
         case .FindByTypeValueResponse: return "FindByTypeValueResponse"
         case .ReadByTypeRequest:  return "ReadByTypeRequest"
         case .ReadByTypeResponse: return "ReadByTypeResponse"
@@ -105,6 +105,10 @@ class AttributeProtocolPDUFactory {
         case .ReadByGroupTypeRequest: return AttributeReadByGroupTypeRequest(pdu:pdu)
         case .ReadByTypeRequest:      return AttributeReadByTypeRequest(pdu:pdu)
         case .ReadRequest:            return AttributeReadRequest(pdu:pdu)
+        case .FindInformationRequest: return AttributeFindInformationRequest(pdu:pdu)
+        case .WriteRequest:           return AttributeWriteRequest(pdu:pdu)
+        case .WriteCommand:           return AttributeWriteCommand(pdu:pdu)
+        case .HandleValueConfirmation: return HandleValueConfirmation(pdu:pdu)
         default: return AttributeProtocolPDU(pdu:pdu)
         }
     }
@@ -206,7 +210,7 @@ enum AttributeErrorCode:UInt8 {
         case .UnsupportedGroupType: return "UnsupportedGroupType"
         case .InsufficientResources: return "InsufficientResources"
         }
-    }    
+    }
 }
 
 
@@ -375,7 +379,7 @@ class AttributeReadByTypeResponse:AttributeProtocolPDU {
 
 class AttributeReadRequest : AttributeProtocolPDU {
     var AttributeHandle:UInt16 = 0
-
+    
     override init(pdu:[UInt8]) {
         super.init(pdu:pdu)
         AttributeHandle = UInt16(Parameters[0]) | UInt16(Parameters[1]) << 8
@@ -401,4 +405,132 @@ class AttributeReadResponse:AttributeProtocolPDU {
         return super.simpleDescription()
             + "\n\t" + " AttributeValue:" + self.arrayToString(AttributeValue)
     }
+}
+
+class AttributeWriteRequest : AttributeProtocolPDU {
+    var AttributeHandle:UInt16 = 0
+    var AttributeValue:[UInt8] = []
+
+    override init(pdu:[UInt8]) {
+        super.init(pdu:pdu)
+        AttributeHandle = UInt16(Parameters[0]) | UInt16(Parameters[1]) << 8
+        AttributeValue  = [UInt8](Parameters[2..<Parameters.count])
+    }
+    
+    override func simpleDescription() -> String {
+        return super.simpleDescription()
+            + "\n\t" + String(format:"AtrributeHandle:0x%04x", AttributeHandle)
+            + "\n\t" + "AtrributeValue:" + self.arrayToString(AttributeValue)
+    }
+}
+
+class AttributeWriteResponse:AttributeProtocolPDU {
+    init() {
+        super.init(opCode:.WriteResponse)
+    }
+}
+
+class AttributeWriteCommand : AttributeWriteRequest {
+}
+
+class AttributeFindInformationRequest: AttributeProtocolPDU {
+    var StartingHandle:UInt16 = 0
+    var EndingHandle:UInt16   = 0
+    
+    override init(pdu:[UInt8]) {
+        super.init(pdu:pdu)
+        StartingHandle = UInt16(Parameters[0]) | UInt16(Parameters[1]) << 8
+        EndingHandle   = UInt16(Parameters[2]) | UInt16(Parameters[3]) << 8
+    }
+    
+    override func simpleDescription() -> String {
+        return super.simpleDescription()
+            + "\n\t" + String(format:"StartingHandle:0x%04x", StartingHandle)
+            + "\n\t" + String(format:"EndingHandle:0x%04x",   EndingHandle)
+    }
+}
+
+enum FindInformationResponseFormat:UInt8 {
+    case HandlesAnd16bitUUIDs  = 0x01
+    case HandlesAnd128bitUUIDs = 0x02
+    
+    func simpleDescription() -> String {
+        switch self {
+        case .HandlesAnd16bitUUIDs: return  "HandlesAnd16bitUUIDs"
+        case .HandlesAnd128bitUUIDs: return "HandlesAnd128bitUUIDs"
+        }
+    }
+    
+}
+
+class AttributeFindInformationResponse: AttributeProtocolPDU {
+    var Format:FindInformationResponseFormat = .HandlesAnd16bitUUIDs
+    var InformationData:[UInt8] = []
+    
+    init(Format:FindInformationResponseFormat, InformationData:[UInt8]) {
+        super.init(opCode:.FindInformationResponse)
+        self.Format = Format
+        self.InformationData = InformationData
+        
+        self.Parameters = [UInt8](count:1, repeatedValue:0)
+        self.Parameters[0] = Format.rawValue
+        self.Parameters += InformationData
+    }
+    
+    override func simpleDescription() -> String {
+        return super.simpleDescription()
+            + "\n\t" + "Format:" + Format.simpleDescription()
+            + "\n\t" + "InformationData:" + self.arrayToString(InformationData)
+    }
+}
+
+class HandleValueNotification: AttributeProtocolPDU {
+    var AttributeHandle:UInt16 = 0
+    var AttributeValue:[UInt8] = []
+
+    init(attributeHandle:UInt16, attributeValue:[UInt8]) {
+        AttributeHandle = attributeHandle
+        AttributeValue  = attributeValue
+        
+        var params = [UInt8](count:2, repeatedValue:0)
+        params[0] = UInt8(AttributeHandle & 0x00ff)
+        params[1] = UInt8(AttributeHandle >> 8)
+        params += AttributeValue
+        
+        super.init(opCode:.HandleValueNotification)
+        self.Parameters = AttributeValue
+    }
+    
+    override func simpleDescription() -> String {
+        return super.simpleDescription()
+            + "\n\t" + String(format:" AttributeHandle:0x%04x", AttributeHandle)
+            + "\n\t" + " AttributeValue:" + self.arrayToString(AttributeValue)
+    }
+}
+
+class HandleValueIndication: AttributeProtocolPDU {
+    var AttributeHandle:UInt16 = 0
+    var AttributeValue:[UInt8] = []
+    
+    init(attributeHandle:UInt16, attributeValue:[UInt8]) {
+        AttributeHandle = attributeHandle
+        AttributeValue  = attributeValue
+        
+        var params = [UInt8](count:2, repeatedValue:0)
+        params[0] = UInt8(AttributeHandle & 0x00ff)
+        params[1] = UInt8(AttributeHandle >> 8)
+        params += AttributeValue
+        
+        super.init(opCode:.HandleValueIndication)
+        self.Parameters = AttributeValue
+    }
+    
+    override func simpleDescription() -> String {
+        return super.simpleDescription()
+            + "\n\t" + String(format:" AttributeHandle:0x%04x", AttributeHandle)
+            + "\n\t" + " AttributeValue:" + self.arrayToString(AttributeValue)
+    }
+}
+
+class HandleValueConfirmation:AttributeProtocolPDU {
 }

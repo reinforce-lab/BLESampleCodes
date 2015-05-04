@@ -31,11 +31,11 @@
 // Protocol bDeviceProtocol 0x01    Bluetooth Primary Controller
 
 @interface BluetoothUSBAdaptor() {
-    mach_port_t  _masterPort;
+    mach_port_t _masterPort;
     io_service_t _handle;
     IOCFPlugInInterface**        _pluginInterface;
-    IOUSBDeviceInterface650**    _deviceInterface;
-    IOUSBInterfaceInterface700** _interfaceInterface;
+    IOUSBDeviceInterface500**    _deviceInterface;
+    IOUSBInterfaceInterface550** _interfaceInterface;
     NSDictionary*                _endPointsToPipe;
 }
 @end
@@ -49,7 +49,7 @@
     self = [super init];
     if(self != nil) {
         _masterPort = [self createMasterPort];
-        _handle     = [self findDeviceHandler:_masterPort];
+        _handle = [self findDeviceHandler:_masterPort];
         _pluginInterface = [self createPluginInterface:_handle];
         _deviceInterface = [self createDeviceInterface:_pluginInterface];
         [self openDeviceInterface:_deviceInterface];
@@ -161,8 +161,20 @@
         }
         
         // read product name
-        _productName = [NSString stringWithString:CFDictionaryGetValue(properties, (__bridge const void *)(@(kUSBProductString)))];
-        NSLog(@"Device found, vendorID:%04x product name:%@", vid, _productName);
+        NSString *productString = CFDictionaryGetValue(properties, (__bridge const void *)(@(kUSBProductString)));
+        if( productString != nil) {
+            _productName = [NSString stringWithString:productString];
+        } else {
+            _productName = @"unknown product name";
+        }
+        
+        uint16 deviceReleaseNumber = 0;
+        NSNumber *devnum = CFDictionaryGetValue(properties, (__bridge const void *)(@(kUSBDeviceReleaseNumber)));
+        if( devnum != nil ) {
+            deviceReleaseNumber = [devnum unsignedIntegerValue];
+        }
+
+        NSLog(@"Device found, vendorID:0x%04x DeviceReleaseNumber:0x%04x product name:%@", vid, deviceReleaseNumber, _productName);
         CFRelease(properties);
         break;
     }
@@ -200,12 +212,12 @@
     }
 }
 
--(IOUSBDeviceInterface650 **)createDeviceInterface:(IOCFPlugInInterface **)pluginInterface {
+-(IOUSBDeviceInterface500 **)createDeviceInterface:(IOCFPlugInInterface **)pluginInterface {
     if(pluginInterface == NULL) {
         return NULL;
     }
-    IOUSBDeviceInterface650 **interface = NULL;
-    HRESULT result = (*pluginInterface)->QueryInterface(pluginInterface, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID182),(LPVOID *)&interface);
+    IOUSBDeviceInterface500 **interface = NULL;
+    HRESULT result = (*pluginInterface)->QueryInterface(pluginInterface, CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID500),(LPVOID *)&interface);
     if(result != SEVERITY_SUCCESS || interface == NULL) {
         NSLog(@"%s, Failure in QueryInterface(), error_code:%08x", __PRETTY_FUNCTION__, result);
         return NULL;
@@ -213,13 +225,13 @@
     return interface;
 }
 
--(void)disposeDeviceInterface:(IOUSBDeviceInterface650 **)deviceInterface {
+-(void)disposeDeviceInterface:(IOUSBDeviceInterface500 **)deviceInterface {
     if(deviceInterface != NULL) {
         (*deviceInterface)->Release(deviceInterface);
     }
 }
 
--(BOOL)configureDevice:(IOUSBDeviceInterface650 **)deviceInterface {
+-(BOOL)configureDevice:(IOUSBDeviceInterface500 **)deviceInterface {
     IOReturn result;
     
     UInt8 numConfig = 0;
@@ -244,12 +256,12 @@
     return YES;
 }
 
--(IOUSBInterfaceInterface700 **)findFirstInterface:(IOUSBDeviceInterface650 **)deviceInterface {
+-(IOUSBInterfaceInterface550 **)findFirstInterface:(IOUSBDeviceInterface500 **)deviceInterface {
     if(deviceInterface == NULL) {
         return NULL;
     }
     
-    IOUSBInterfaceInterface700 **interfaceInterface = NULL;
+    IOUSBInterfaceInterface550 **interfaceInterface = NULL;
     
     IOUSBFindInterfaceRequest request;
     request.bInterfaceClass    = kIOUSBFindInterfaceDontCare;
@@ -275,7 +287,7 @@
             continue;
         }
         
-        HRESULT res = (*pluginInterface)->QueryInterface(pluginInterface, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID700),(LPVOID)&interfaceInterface);
+        HRESULT res = (*pluginInterface)->QueryInterface(pluginInterface, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID550),(LPVOID)&interfaceInterface);
         IODestroyPlugInInterface(pluginInterface);
         if(res != kIOReturnSuccess) {
             continue;
@@ -288,14 +300,14 @@
     return interfaceInterface;
 }
 
--(void)disposeInterfaceInterface:(IOUSBInterfaceInterface700 **)interfaceInterface {
+-(void)disposeInterfaceInterface:(IOUSBInterfaceInterface550 **)interfaceInterface {
     if(interfaceInterface == NULL) {
         return;
     }
     (*interfaceInterface)->Release(interfaceInterface);
 }
 
--(BOOL)openInterfaceInterface:(IOUSBInterfaceInterface700 **)interfaceInterface {
+-(BOOL)openInterfaceInterface:(IOUSBInterfaceInterface550 **)interfaceInterface {
     if(interfaceInterface == NULL) {
         return NO;
     }
@@ -303,7 +315,7 @@
     return (result == kIOReturnSuccess);
 }
 
--(BOOL)closeInterfaceInterface:(IOUSBInterfaceInterface700 **)interfaceInterface {
+-(BOOL)closeInterfaceInterface:(IOUSBInterfaceInterface550 **)interfaceInterface {
     if(interfaceInterface == NULL) {
         return NO;
     }
@@ -311,7 +323,7 @@
     return (result == kIOReturnSuccess);
 }
 
--(BOOL)openDeviceInterface:(IOUSBDeviceInterface650 **)deviceInterface {
+-(BOOL)openDeviceInterface:(IOUSBDeviceInterface500 **)deviceInterface {
     if(deviceInterface == NULL) {
         return NO;
     }
@@ -323,7 +335,7 @@
     return YES;
 }
 
--(BOOL)closeDeviceInterface:(IOUSBDeviceInterface650 **)deviceInterface {
+-(BOOL)closeDeviceInterface:(IOUSBDeviceInterface500 **)deviceInterface {
     if(deviceInterface == NULL) {
         return NO;
     }
@@ -336,7 +348,7 @@
 }
 
 // デバイスをリセットします。デバイスはOpenされていなければなりません。
--(BOOL)resetDeviceInterface:(IOUSBDeviceInterface650 **)deviceInterface {
+-(BOOL)resetDeviceInterface:(IOUSBDeviceInterface500 **)deviceInterface {
     if(deviceInterface == NULL) {
         return NO;
     }
@@ -373,7 +385,7 @@
             NSLog(@"Error in GetPipeProperties(), error_code:%x", result);
             return dict;
         }
-//NSLog(@"interface:%d direction:%d, number:%d, transferType:0x%x, maxpacketSize:%d, interval:%d", i, direction, number, transferType, maxPacketSize, interval);
+NSLog(@"interface:%d direction:%d, number:%d, transferType:0x%x, maxpacketSize:%d, interval:%d", i, direction, number, transferType, maxPacketSize, interval);
         // Endpointの最上位ビットはdirectionを表す
         UInt8 endpoint = (direction << 7) | number;
         dict[@(endpoint)] = @(i); // Endpoint-pipe の対応
@@ -382,7 +394,7 @@
 }
 
 #pragma mark - Public methods
-
+/*
 -(BOOL)flush:(UInt8)endpoint {
     if(_interfaceInterface == NULL) {
         return NO;
@@ -394,19 +406,18 @@
     
     IOReturn result = (*_interfaceInterface)->ClearPipeStall(_interfaceInterface, [pipe unsignedCharValue]);
     return (result == kIOReturnSuccess);
-}
+}*/
 
 // HCIイベントを受信
 -(NSData *)readHCIEvent {
     NSNumber *hciEventPipe = _endPointsToPipe[@(0x81)]; // LIBUSB_ENDPOINT_IN (0x80) | 0x01
-    UInt8 buf[64];
+    UInt8 buf[32];
     UInt32 size = sizeof(buf);
     IOReturn result = (*_interfaceInterface)->ReadPipe(_interfaceInterface, [hciEventPipe unsignedCharValue], buf, &size);
     // 結果をNSDataにして送信
     if(result == kIOReturnSuccess) {
         return [NSData dataWithBytes:buf length:size];
     } else {
-NSLog(@"Failed ReadPipe() with an error code:0x%04x.", result);
         return [NSData dataWithBytes:buf length:0];
     }
 }
@@ -414,14 +425,13 @@ NSLog(@"Failed ReadPipe() with an error code:0x%04x.", result);
 // HCIイベントを受信
 -(NSData *)readHCIEventTO {
     NSNumber *hciEventPipe = _endPointsToPipe[@(0x81)]; // LIBUSB_ENDPOINT_IN (0x80) | 0x01
-    UInt8 buf[64];
+    UInt8 buf[32];
     UInt32 size = sizeof(buf);
-    IOReturn result = (*_interfaceInterface)->ReadPipeTO(_interfaceInterface, [hciEventPipe unsignedCharValue], buf, &size, 100 ,100);
+    IOReturn result = (*_interfaceInterface)->ReadPipeTO(_interfaceInterface, [hciEventPipe unsignedCharValue], buf, &size, 10 ,10);
     // 結果をNSDataにして送信
     if(result == kIOReturnSuccess) {
         return [NSData dataWithBytes:buf length:size];
     } else {
-NSLog(@"Failed ReadPipeTO() with an error code:0x%04x.", result);
         return [NSData dataWithBytes:buf length:0];
     }
 }
@@ -476,10 +486,12 @@ NSLog(@"Failed ReadPipeTO() with an error code:0x%04x.", result);
         return YES;
     }
     
-    IOReturn result = (*_interfaceInterface)->WritePipeTO(_interfaceInterface, [hciACLDataPipe unsignedCharValue], (void*)data.bytes, (UInt32)data.length, 100, 100);
+    IOReturn result = (*_interfaceInterface)->WritePipeTO(_interfaceInterface, [hciACLDataPipe unsignedCharValue], (void*)data.bytes, (UInt32)data.length, 0, 0);
     if(result != kIOReturnSuccess) {
         NSLog(@"Fatal errorin writeACLData(), errorCode:0x%04x", result);
     }
+
+    
     return (result == kIOReturnSuccess);
 }
 
@@ -494,14 +506,19 @@ NSLog(@"Failed ReadPipeTO() with an error code:0x%04x.", result);
         return NO;
     }
     
+    IOReturn stat = (*_interfaceInterface)->GetPipeStatus(_interfaceInterface, [hciACLDataPipe unsignedIntegerValue]);
+    if(stat == kIOUSBPipeStalled) {
+        NSLog(@"%s Pipe is stalled.", __PRETTY_FUNCTION__);
+        (*_interfaceInterface)->ResetPipe(_interfaceInterface, [hciACLDataPipe unsignedIntegerValue]);
+    }
+                                                          
     //    IOReturn (*ReadPipeTO)(void *self, UInt8 pipeRef, void *buf, UInt32 *size, UInt32 noDataTimeout, UInt32 completionTimeout);
-    UInt8 buf[64];
+    UInt8 buf[256];
     UInt32 size = sizeof(buf);
-    IOReturn result = (*_interfaceInterface)->ReadPipeTO(_interfaceInterface, [hciACLDataPipe unsignedCharValue], buf, &size, 1000, 1000);
+    IOReturn result = (*_interfaceInterface)->ReadPipeTO(_interfaceInterface, [hciACLDataPipe unsignedCharValue], buf, &size, 10, 10);
     if(result == kIOReturnSuccess) {
         return [NSData dataWithBytes:buf length:size];
     } else {
-NSLog(@"Failed ReadPipeTO() in readACLData with an error code:0x%04x.", result);
         return [NSData data];
     }
 }

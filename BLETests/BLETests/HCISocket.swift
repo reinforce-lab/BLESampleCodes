@@ -12,18 +12,20 @@ import Foundation
 
 class HCISocket {
     // MARK: Variables
-    let _adaptor:BluetoothUSBAdaptor
+//    let _adaptor:BluetoothUSBAdaptor
+    let _adaptor:libUSBWrapper
     var packet:[UInt8]
     
     // MARK: constructor
-    init(adaptor:BluetoothUSBAdaptor) {
+//    init(adaptor:BluetoothUSBAdaptor) {
+    init(adaptor:libUSBWrapper) {
         _adaptor = adaptor
         packet = []
     }
     
     // MARK:private methods
     
-    // MARK:public methods    
+    // MARK:public methods
     func readEvent() -> HCIEvent {
         let data = _adaptor.readHCIEvent()
         var buffer = [UInt8](count: data.length, repeatedValue: 0)
@@ -43,7 +45,7 @@ class HCISocket {
         //println("packet:\(packet) buffer:\(buffer)")
         return HCIEventParser.parse(buffer)
     }
-
+    
     
     func sendCommand(command:HCIOpcodeCommand, parameters:[UInt8]) -> (HCIEvent){
         // コマンドパケットを構築する。
@@ -73,11 +75,11 @@ class HCISocket {
         let data   = _adaptor.executeCommand(NSData(bytes:&packet, length:packet.count * sizeof(UInt8)))
         var buffer = [UInt8](count: data.length, repeatedValue: 0)
         data.getBytes(&buffer, length:data.length)
-//println("packet:\(packet) buffer:\(buffer)")
-
+        //println("packet:\(packet) buffer:\(buffer)")
+        
         return HCIEventParser.parse(buffer)
     }
-
+    
     
     func readACLData() -> (didReceivedPacket:Bool, data:HCIACLDataPacket) {
         let data = _adaptor.readACLData();
@@ -101,11 +103,32 @@ class HCISocket {
         return self.sendCommand(.Reset, parameters:[])
     }
     
+    // ローカルの情報をprintlnします
+    func print_localInformation() {
+        var event = self.sendCommand(.ReadLocalVersionInformation, parameters:[])
+        if event.eventCode != .CommandCompleted {
+            return
+        }
+        println("Local version information:"
+            + String(format:"\n\t HCI_Version:%d", event.parameters[1])
+            + String(format:"\n\t HCI_Revision:%d", UInt16(event.parameters[2]) | UInt16(event.parameters[3]) << 8 )
+            + String(format:"\n\t ManufacturerName:0x%04x", UInt16(event.parameters[5]) | UInt16(event.parameters[6]) << 8 )
+        )
+        
+        event = self.sendCommand(.ReadBufferSize, parameters:[])
+        if event.eventCode != .CommandCompleted {
+            return
+        }
+        println("Buffer size:"
+            + String(format:"\n\t HCI_ACL_Data_Packet_Length:%d",     UInt16(event.parameters[1]) | UInt16(event.parameters[2]) << 8 )
+            + String(format:"\n\t HCI_Total_Num_ACL_Data_Packets:%d", UInt16(event.parameters[4]) | UInt16(event.parameters[5]) << 8 )
+        )
+    }
+    
+    
     // BD_ADDRを読み出します。アドレス配列は内部でエンディアンを変換して、ビッグエンディアンにして返します。
     func execute_ReadBD_ADDR() -> (errorCode: HCIErrorCode, BD_ADDR:[UInt8]) {
         let event = self.sendCommand(.ReadBD_ADDR, parameters:[])
-        
-
         if event.eventCode != .CommandCompleted {
             // コマンド自体が完了できなかった
             return (.UnknownHCICommand, event.parameters)
@@ -154,7 +177,9 @@ class HCISocket {
         if event.eventCode != .CommandCompleted {
             return HCIErrorCode.UnknownHCICommand
         }
-
+        
+        self.print_localInformation()
+        
         (result, BD_ADDR) = self.execute_ReadBD_ADDR()
         if result != .Success {
             return result
@@ -165,13 +190,13 @@ class HCISocket {
             return result
         }
         
-
+        
         
         // アドバタイジングを開始する
         event = self.sendCommand(.LESetAdvertisingData, parameters:[
             // 一般的なアドバタイジング・データの例。
             0x10, // Advertising_Data_Length, 3 + 9 + 4 = 16
-
+            
             // Advertising dataのフォーマット:
             // Length(1), AD type(1), AD Data(length -1)
             
@@ -188,7 +213,7 @@ class HCISocket {
             // Incomplete List of 16-bit Service Class UUIDs (0x02)
             //  UUID 0x12, 0x34
             0x03, 0x02, 0x12, 0x34,
-  
+            
             // 31オクテットにするための埋草
             // 31 - 16 = 15
             0x00, 0x00, 0x00, 0x00, 0x00,
@@ -209,7 +234,7 @@ class HCISocket {
             0x00, // Peer_Address_type: Public Device Address
             
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Peer_adddress
-
+            
             // Advertising_Channel_Map:
             0x01,     // アドバタイジングチャネルを37のみに固定する場合はこちらをコメントアウトする。
             //0x07,   //すべてのチャネルでアドバタイジングするならばこちらをコメントアウトする。

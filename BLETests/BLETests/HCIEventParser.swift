@@ -24,6 +24,8 @@ class HCIEventParser {
             return HCIEventCommandComplete(packet:packet)
         case .CommandStatus:
             return HCIEventCommandStatus(packet:packet)
+        case .NumberOfCompletedPackets:
+            return HCIEventNumberOfCompletedPackets(packet: packet)            
         case .LowEnergyEvent:
             switch parameters[0] {
             case 0x01:
