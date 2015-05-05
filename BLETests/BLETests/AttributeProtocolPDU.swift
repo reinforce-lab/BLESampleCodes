@@ -491,14 +491,14 @@ class HandleValueNotification: AttributeProtocolPDU {
     init(attributeHandle:UInt16, attributeValue:[UInt8]) {
         AttributeHandle = attributeHandle
         AttributeValue  = attributeValue
+
+        super.init(opCode:.HandleValueNotification)
         
         var params = [UInt8](count:2, repeatedValue:0)
         params[0] = UInt8(AttributeHandle & 0x00ff)
         params[1] = UInt8(AttributeHandle >> 8)
-        params += AttributeValue
-        
-        super.init(opCode:.HandleValueNotification)
-        self.Parameters = AttributeValue
+
+        self.Parameters = params + AttributeValue
     }
     
     override func simpleDescription() -> String {

@@ -60,8 +60,7 @@ class ConnectionTest:TestBase {
         
         // ACL Data
         while(true) {
-            let (isValid, aclData) = _socket.readACLData()
-            if isValid {
+            if let aclData = _socket.readACLData() {
                 println("\nMaster -> Slave")
                 
                 println("ACL Data:\(aclData.simpleDescription())")

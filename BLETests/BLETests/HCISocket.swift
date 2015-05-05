@@ -12,13 +12,13 @@ import Foundation
 
 class HCISocket {
     // MARK: Variables
-//    let _adaptor:BluetoothUSBAdaptor
-    let _adaptor:libUSBWrapper
+    let _adaptor:BluetoothUSBAdaptor
+//    let _adaptor:libUSBWrapper
     var packet:[UInt8]
     
     // MARK: constructor
-//    init(adaptor:BluetoothUSBAdaptor) {
-    init(adaptor:libUSBWrapper) {
+    init(adaptor:BluetoothUSBAdaptor) {
+//    init(adaptor:libUSBWrapper) {
         _adaptor = adaptor
         packet = []
     }
@@ -33,19 +33,6 @@ class HCISocket {
         //println("packet:\(packet) buffer:\(buffer)")
         return HCIEventParser.parse(buffer)
     }
-    
-    func readEventTimeOut() -> HCIEvent? {
-        let data = _adaptor.readHCIEventTO()
-        if data == nil || data!.length == 0 {
-            return nil
-        }
-        
-        var buffer = [UInt8](count: data!.length, repeatedValue: 0)
-        data!.getBytes(&buffer, length:data!.length)
-        //println("packet:\(packet) buffer:\(buffer)")
-        return HCIEventParser.parse(buffer)
-    }
-    
     
     func sendCommand(command:HCIOpcodeCommand, parameters:[UInt8]) -> (HCIEvent){
         // コマンドパケットを構築する。
@@ -81,14 +68,14 @@ class HCISocket {
     }
     
     
-    func readACLData() -> (didReceivedPacket:Bool, data:HCIACLDataPacket) {
+    func readACLData() -> (HCIACLDataPacket?) {
         let data = _adaptor.readACLData();
         var buffer = [UInt8](count:data.length, repeatedValue:0)
         data.getBytes(&buffer, length:data.length)
         if data.length != 0 {
-            return (true, HCIACLDataPacket(packet:buffer))
+            return HCIACLDataPacket(packet:buffer)
         } else {
-            return (false, HCIACLDataPacket())
+            return nil
         }
     }
     

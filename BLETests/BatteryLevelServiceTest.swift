@@ -33,77 +33,128 @@ class BatteryLevelGATTServer:SimpleGATTServer {
 class BatteryLevelServiceTest:TestBase {
     let l2capFrameFactory = L2CAPFrameFactory()
     let gattServer        = BatteryLevelGATTServer()
+    
     var lastNotifiedAt    = NSDate()
     var batteryLevel:UInt8 = 100
+
+    let queue     = dispatch_queue_create("BLETest", DISPATCH_QUEUE_CONCURRENT)
+    let semaphore = dispatch_semaphore_create(1)
+    
+    var isConnected = true
+    var handle:UInt16 = 0
     
     func test() -> () {
+        
         // アドバタイジングを開始します
         var result = _socket.execute_startAdvertisingAndWaitingForConnection()
         if result != .Success {
             println("Fatal error in a connecting.")
             return
         }
+        self.isConnected = true
         
         // バッテリサービスのバッテリ値のCCCDを取得します
         let batteryLevelValueDeclarationAttribute = gattServer.findAttribute(0x0012) as! CharacteristicValueDeclarationAttribute
         let cccd  = gattServer.findAttribute(0x0014) as! ClientCharactristicConfigurationAttribute
         
-        while(true) {
-            // event
-            if let event = _socket.readEventTimeOut() {
-                println("\nevent:\(event.simpleDescription())")
-            }
+        // コマンドの受信処理
+        dispatch_async(queue) {
+            while(true) {
+                let event = self._socket.readEvent()
+                dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER)
 
-            // ACL Data
-            let (isValid, aclData) = _socket.readACLData()
-            if isValid {
-                println("\nMaster -> Slave")
-                println("ACL Data:\(aclData.simpleDescription())")
-                
-                // L2CAPの1フレームを取得
-                let frame = l2capFrameFactory.parse(aclData.Data)
-                if frame == nil {
-                    continue;
-                }
-                let l2capframe = frame!
-                // 想定しないチャネルのフレームは無視する
-                if(l2capframe.ChannelID == .UnknownChannelID) {
-                    continue;
+                println("\nevent:\(event.simpleDescription())")
+                if event.eventCode == .DisconnectionComplete {
+                    self.isConnected = false
                 }
                 
-                // チャネルごとの処理
-                println("L2CAP Frame:\(l2capframe.simpleDescription())")
-                switch l2capframe.ChannelID {
-                case .AttributeProtocol:
-                    let attr = AttributeProtocolPDUFactory.parseAttributeProtocolPDU(l2capframe.InformationPayload)
-                    println("Attribute PDU:\(attr.simpleDescription())")
-                    
-                    if let responseAttr = getATTResponse(attr) {
-                        println("\nSlave -> Master")
-                        println("Attribute PDU:\(responseAttr.simpleDescription())")
-                        let responseL2CAPPDU = l2capFrameFactory.build(.AttributeProtocol, payload: responseAttr.PDU)
-                        let responseACLData = HCIACLDataPacket(Handle: aclData.Handle, Packet_Boundary_Flag: .FirstAutomaticallyFlushablePacket, Broadcast_Flag: 0x00, Data:responseL2CAPPDU)
-                        println("ACL Data:\(responseACLData.simpleDescription())")
-                        _socket.writeACLData(responseACLData)
-                    }
-                default:
-                    println("") // 空行
-                }
-            }
-            
-            // Indication / Notification
-            if cccd.CharacteristicConfigurations.count > 0 && cccd.CharacteristicConfigurations[0] == .Notification && abs(lastNotifiedAt.timeIntervalSinceNow) > 1.0 {
-                println("\nSlave -> Master (notification)")
-                lastNotifiedAt = NSDate()
-                batteryLevel = (batteryLevel - 1 + 100) % 100
-                var notification = HandleValueNotification(attributeHandle: 0x012, attributeValue: [batteryLevel])
-                println("Attribute PDU:\(notification.simpleDescription())")
-                let responseL2CAPPDU = l2capFrameFactory.build(.AttributeProtocol, payload: notification.PDU)
-                let responseACLData = HCIACLDataPacket(Handle: aclData.Handle, Packet_Boundary_Flag: .FirstAutomaticallyFlushablePacket, Broadcast_Flag: 0x00, Data:responseL2CAPPDU)
-                println("ACL Data:\(responseACLData.simpleDescription())")
-                _socket.writeACLData(responseACLData)
+                dispatch_semaphore_signal(self.semaphore)
             }
         }
+        
+        // ATTの処理
+        dispatch_async(queue) {
+            while(true) {
+                let aclData = self._socket.readACLData()
+                dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER)
+                
+                if aclData != nil {
+                    self.handle = aclData!.Handle
+                    
+                    println("\nMaster -> Slave")
+                    println("ACL Data:\(aclData!.simpleDescription())")
+                    
+                    // L2CAPの1フレームを取得
+                    let frame = self.l2capFrameFactory.parse(aclData!.Data)
+                    if frame == nil {
+                        break
+                    }
+                    let l2capframe = frame!
+                    // 想定しないチャネルのフレームは無視する
+                    if(l2capframe.ChannelID == .UnknownChannelID) {
+                        println("Unknonw l2cap channel ID")
+                        break
+                    }
+                    
+                    // チャネルごとの処理
+                    println("L2CAP Frame:\(l2capframe.simpleDescription())")
+                    switch l2capframe.ChannelID {
+                    case .AttributeProtocol:
+                        let attr = AttributeProtocolPDUFactory.parseAttributeProtocolPDU(l2capframe.InformationPayload)
+                        println("Attribute PDU:\(attr.simpleDescription())")
+                        
+                        if let responseAttr = self.getATTResponse(attr) {
+                            println("\nSlave -> Master")
+                            println("Attribute PDU:\(responseAttr.simpleDescription())")
+                            let responseL2CAPPDU = self.l2capFrameFactory.build(.AttributeProtocol, payload: responseAttr.PDU)
+                            let responseACLData = HCIACLDataPacket(Handle: aclData!.Handle, Packet_Boundary_Flag: .FirstAutomaticallyFlushablePacket, Broadcast_Flag: 0x00, Data:responseL2CAPPDU)
+                            println("ACL Data:\(responseACLData.simpleDescription())")
+                            self._socket.writeACLData(responseACLData)
+                        }
+                    default:
+                        println("") // 空行
+                    }
+                }
+                
+                dispatch_semaphore_signal(self.semaphore)
+            }
+        }
+        
+        // ノーティフィケーションを飛ばす
+        dispatch_async(queue) {
+            while true {
+            if cccd.CharacteristicConfigurations.count > 0 && cccd.CharacteristicConfigurations[0] == .Notification {
+                dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER)
+                
+                println("\nSlave -> Master (notification)")
+                self.batteryLevel = (self.batteryLevel - 1 + 100) % 100
+                var notification = HandleValueNotification(attributeHandle: 0x012, attributeValue: [self.batteryLevel])
+                println("Attribute PDU:\(notification.simpleDescription())")
+                let responseL2CAPPDU = self.l2capFrameFactory.build(.AttributeProtocol, payload: notification.PDU)
+                let responseACLData = HCIACLDataPacket(Handle:self.handle, Packet_Boundary_Flag: .FirstAutomaticallyFlushablePacket, Broadcast_Flag: 0x00, Data:responseL2CAPPDU)
+                println("ACL Data:\(responseACLData.simpleDescription())")
+                self._socket.writeACLData(responseACLData)
+
+                dispatch_semaphore_signal(self.semaphore)
+                }
+            
+            sleep(1)
+            }
+        }
+        
+        // 切断を待つ
+        println("\nConnecting...")
+        while self.isConnected {
+//            NSRunLoop.currentRunLoop().runMode(NSDefaultRunLoopMode, beforeDate: NSDate())
+            usleep(10000)
+        }
+        println("\nDisconnected")
+        /*
+        // Indication / Notification
+        
+        }
+        }
+        */
     }
     
     func getATTResponse(attr:AttributeProtocolPDU) -> AttributeProtocolPDU? {
@@ -133,7 +184,7 @@ class BatteryLevelServiceTest:TestBase {
             } else {
                 return AttributeErrorResponse(requestOpCodeInError: attr.Opcode, attributeHandleInError: request.StartingHandle, errorCode: .AttributeNotFound)
             }
-
+            
         case .ReadRequest:
             // BLUETOOTH SPECIFICATION Version 4.2 [Vol 3, Part F] page 492
             // 3.4.4.3 Read Request
@@ -143,7 +194,7 @@ class BatteryLevelServiceTest:TestBase {
             } else {
                 return AttributeErrorResponse(requestOpCodeInError: attr.Opcode, attributeHandleInError: request.AttributeHandle, errorCode: .InvalidHandle)
             }
-
+            
         case .FindInformationRequest:
             // BLUETOOTH SPECIFICATION Version 4.2 [Vol 3, Part F] page 485
             // 3.4.3.1 Find Information Request
@@ -159,7 +210,7 @@ class BatteryLevelServiceTest:TestBase {
             } else {
                 return AttributeErrorResponse(requestOpCodeInError: attr.Opcode, attributeHandleInError:request.StartingHandle , errorCode: .AttributeNotFound)
             }
-
+            
         case .WriteRequest:
             // BLUETOOTH SPECIFICATION Version 4.2 [Vol 3, Part F] page 499
             // 3.4.5.1 Write Request

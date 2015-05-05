@@ -42,7 +42,6 @@
 
 @implementation BluetoothUSBAdaptor
 #pragma mark - Properties
-
 #pragma mark - Constructor
 // Bluetooth USBドングルと接続できなければ、nilを返します。
 -(id)init {
@@ -486,7 +485,7 @@ NSLog(@"interface:%d direction:%d, number:%d, transferType:0x%x, maxpacketSize:%
         return YES;
     }
     
-    IOReturn result = (*_interfaceInterface)->WritePipeTO(_interfaceInterface, [hciACLDataPipe unsignedCharValue], (void*)data.bytes, (UInt32)data.length, 0, 0);
+    IOReturn result = (*_interfaceInterface)->WritePipe(_interfaceInterface, [hciACLDataPipe unsignedCharValue], (void*)data.bytes, (UInt32)data.length);
     if(result != kIOReturnSuccess) {
         NSLog(@"Fatal errorin writeACLData(), errorCode:0x%04x", result);
     }
@@ -494,7 +493,6 @@ NSLog(@"interface:%d direction:%d, number:%d, transferType:0x%x, maxpacketSize:%
     
     return (result == kIOReturnSuccess);
 }
-
 
 -(NSData *)readACLData {
     if(_interfaceInterface == NULL) {
@@ -506,16 +504,16 @@ NSLog(@"interface:%d direction:%d, number:%d, transferType:0x%x, maxpacketSize:%
         return NO;
     }
     
+    /*
     IOReturn stat = (*_interfaceInterface)->GetPipeStatus(_interfaceInterface, [hciACLDataPipe unsignedIntegerValue]);
     if(stat == kIOUSBPipeStalled) {
         NSLog(@"%s Pipe is stalled.", __PRETTY_FUNCTION__);
         (*_interfaceInterface)->ResetPipe(_interfaceInterface, [hciACLDataPipe unsignedIntegerValue]);
     }
-                                                          
-    //    IOReturn (*ReadPipeTO)(void *self, UInt8 pipeRef, void *buf, UInt32 *size, UInt32 noDataTimeout, UInt32 completionTimeout);
+      */
     UInt8 buf[256];
     UInt32 size = sizeof(buf);
-    IOReturn result = (*_interfaceInterface)->ReadPipeTO(_interfaceInterface, [hciACLDataPipe unsignedCharValue], buf, &size, 10, 10);
+    IOReturn result = (*_interfaceInterface)->ReadPipe(_interfaceInterface, [hciACLDataPipe unsignedCharValue], buf, &size);
     if(result == kIOReturnSuccess) {
         return [NSData dataWithBytes:buf length:size];
     } else {

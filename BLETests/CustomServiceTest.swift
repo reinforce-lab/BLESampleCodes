@@ -28,14 +28,9 @@ class CustomServiceTest:TestBase {
         }
         
         while(true) {
-            // event
-            if let event = _socket.readEventTimeOut() {
-                println("event:\(event)")
-            }
             
             // ACL Data
-            let (isValid, aclData) = _socket.readACLData()
-            if isValid {
+            if let aclData = _socket.readACLData() {
                 println("\nMaster -> Slave")
                 println("ACL Data:\(aclData.simpleDescription())")
                 

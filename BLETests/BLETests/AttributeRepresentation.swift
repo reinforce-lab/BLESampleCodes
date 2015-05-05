@@ -185,7 +185,7 @@ class ClientCharactristicConfigurationAttribute:AttributeRepresentation {
             var val = UInt16(newValue[0]) | UInt16(newValue[1]) << 8
             var bits:[CharacteristicConfigurationBits] = []
             for bit:CharacteristicConfigurationBits in [.Notification, .Indication] {
-                if (bit.rawValue | val) != 0 {
+                if (bit.rawValue & val) != 0 {
                     bits.append(bit)
                 }
             }
