@@ -384,7 +384,7 @@
             NSLog(@"Error in GetPipeProperties(), error_code:%x", result);
             return dict;
         }
-NSLog(@"interface:%d direction:%d, number:%d, transferType:0x%x, maxpacketSize:%d, interval:%d", i, direction, number, transferType, maxPacketSize, interval);
+//NSLog(@"interface:%d direction:%d, number:%d, transferType:0x%x, maxpacketSize:%d, interval:%d", i, direction, number, transferType, maxPacketSize, interval);
         // Endpointの最上位ビットはdirectionを表す
         UInt8 endpoint = (direction << 7) | number;
         dict[@(endpoint)] = @(i); // Endpoint-pipe の対応

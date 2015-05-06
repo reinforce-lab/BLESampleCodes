@@ -11,27 +11,33 @@ import Foundation
 // HCIのコマンド/イベントのやりとりの詳細を隠ぺいするクラスです
 
 class HCISocket {
+    var PeerAddressType:UInt8 = 0
+    var PeerAddress:[UInt8] = []
+    var OwnAddressType:UInt8  = 0x00
+    var OwnAddress:[UInt8]    = []
+    
+    var ConnectionHandle:UInt16 = 0
+    
     // MARK: Variables
     let _adaptor:BluetoothUSBAdaptor
-//    let _adaptor:libUSBWrapper
-    var packet:[UInt8]
     
     // MARK: constructor
     init(adaptor:BluetoothUSBAdaptor) {
-//    init(adaptor:libUSBWrapper) {
         _adaptor = adaptor
-        packet = []
     }
     
-    // MARK:private methods
-    
-    // MARK:public methods
-    func readEvent() -> HCIEvent {
+    func readEvent() -> HCIEvent? {
         let data = _adaptor.readHCIEvent()
+        if data.length == 0 {
+            return nil
+        }
+        
         var buffer = [UInt8](count: data.length, repeatedValue: 0)
         data.getBytes(&buffer, length:data.length)
         //println("packet:\(packet) buffer:\(buffer)")
-        return HCIEventParser.parse(buffer)
+        let event = HCIEventParser.parse(buffer)
+        
+        return event
     }
     
     func sendCommand(command:HCIOpcodeCommand, parameters:[UInt8]) -> (HCIEvent){
@@ -53,7 +59,7 @@ class HCISocket {
         let OpcodeGroupField   = UInt8(command.rawValue >> 16)
         let OpCodeCommandFiled = UInt16(command.rawValue & 0x0000ffff)
         
-        packet = [UInt8](count:(2+1), repeatedValue:0)
+        var packet = [UInt8](count:(2+1), repeatedValue:0)
         packet[0] = UInt8(0x00ff & OpCodeCommandFiled)
         packet[1] = UInt8(OpcodeGroupField << 2) | UInt8(OpCodeCommandFiled >> 8)
         packet[2] = UInt8(parameters.count)
@@ -66,7 +72,6 @@ class HCISocket {
         
         return HCIEventParser.parse(buffer)
     }
-    
     
     func readACLData() -> (HCIACLDataPacket?) {
         let data = _adaptor.readACLData();
@@ -112,7 +117,6 @@ class HCISocket {
         )
     }
     
-    
     // BD_ADDRを読み出します。アドレス配列は内部でエンディアンを変換して、ビッグエンディアンにして返します。
     func execute_ReadBD_ADDR() -> (errorCode: HCIErrorCode, BD_ADDR:[UInt8]) {
         let event = self.sendCommand(.ReadBD_ADDR, parameters:[])
@@ -128,8 +132,9 @@ class HCISocket {
     
     func execute_setMetaEventMask() ->(HCIErrorCode) {
         //イベントマスクを設定
-        //0x2000000000000000 LE Meta-Event
-        var event = self.sendCommand(.SetEventMask, parameters:[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20 ])
+        // 0x00 00 1F FF FF FF FF FF Default
+        //(0x2000000000000000 LE Meta-Event)
+        var event = self.sendCommand(.SetEventMask, parameters:[0xff, 0xff, 0xff, 0xff, 0xff, 0x1f, 0x00, 0x20 ])
         // コマンド自体が完了できなかった
         if event.eventCode != .CommandCompleted {
             return .UnknownHCICommand
@@ -165,19 +170,21 @@ class HCISocket {
             return HCIErrorCode.UnknownHCICommand
         }
         
-        self.print_localInformation()
+//        self.print_localInformation()
         
         (result, BD_ADDR) = self.execute_ReadBD_ADDR()
         if result != .Success {
             return result
         }
         
+        // ローカルのアドレスタイプとアドレスを保存します
+        self.OwnAddressType = 0x00 // 0x00: public address
+        self.OwnAddress     = BD_ADDR
+        
         result = execute_setMetaEventMask()
         if result != .Success {
             return result
         }
-        
-        
         
         // アドバタイジングを開始する
         event = self.sendCommand(.LESetAdvertisingData, parameters:[
@@ -223,8 +230,8 @@ class HCISocket {
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Peer_adddress
             
             // Advertising_Channel_Map:
-            0x01,     // アドバタイジングチャネルを37のみに固定する場合はこちらをコメントアウトする。
-            //0x07,   //すべてのチャネルでアドバタイジングするならばこちらをコメントアウトする。
+            0x01,     // アドバタイジングチャネルを37のみに固定する。
+            //0x07,   //すべてのチャネルでアドバタイジングする。
             
             0x00  // Advertisiong_Filter_Policy: Process scan and connection requests from all devices.
             ])
@@ -253,13 +260,57 @@ class HCISocket {
         }
         
         // 接続完了を待ちます。
-        var event:HCIEventLEConnectionComplete?
         while(true) {
-            event = self.readEvent() as? HCIEventLEConnectionComplete
-            if event != nil {
-                break;
+            if let connectionCompletedEvent = self.readEvent() as? HCIEventLEConnectionComplete {
+                self.PeerAddressType = connectionCompletedEvent.Peer_Address_Type
+                self.PeerAddress     = connectionCompletedEvent.Peer_Address
+                self.ConnectionHandle = connectionCompletedEvent.Connection_Handle
+                break
             }
         }
+        
         return .Success
+    }
+
+    func execute_longTermKeyRequestNegativeReply() -> HCIErrorCode {
+        var result:HCIErrorCode
+        var event:HCIEvent
+        var eventCode:HCIEventCode
+        
+        var handle = [UInt8](count:2, repeatedValue:0)
+        handle[0] = UInt8(ConnectionHandle & 0x00ff)
+        handle[1] = UInt8(ConnectionHandle >> 8)
+        event = self.sendCommand( .LELongTermKeyRequestNegativeReply, parameters: handle)
+       
+        println("\nHost -> Controller\n command:.LELongTermKeyRequestNegativeReply parameters:\(handle)")
+        println("\nController -> Host \n event:\(event)")
+        
+        if event.eventCode != .CommandCompleted {
+            println("Fatal error in LELongTermKeyRequestNegativeReply.")
+            return HCIErrorCode(rawValue: event.parameters[0])!
+        }
+        
+        return HCIErrorCode.Success
+    }
+    
+    func execute_longTermKeyRequestReply(longTermKey:[UInt8])-> HCIErrorCode {
+        var result:HCIErrorCode
+        var event:HCIEvent
+        var eventCode:HCIEventCode
+        
+        var handle = [UInt8](count:2, repeatedValue:0)
+        handle[0]  = UInt8(ConnectionHandle & 0x00ff)
+        handle[1]  = UInt8(ConnectionHandle >> 8)
+        event = self.sendCommand( .LELongTermKeyRequestReply, parameters: handle + longTermKey.reverse())
+        
+        println("\nHost -> Controller\n command:.LELongTermKeyRequestReply parameters:\(handle + longTermKey.reverse())")
+        println("\nController -> Host \n event:\(event)")
+        
+        if event.eventCode != .CommandCompleted {
+            println("Fatal error in LELongTermKeyRequestReply.")
+            return HCIErrorCode(rawValue: event.parameters[0])!
+        }
+        
+        return HCIErrorCode.Success
     }
 }

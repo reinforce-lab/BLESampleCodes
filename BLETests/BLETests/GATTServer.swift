@@ -67,27 +67,3 @@ class GATTServer {
 }
 
 
-
-// 128-bit UUIDを使った、カスタムなサービスとキャラクタリスティクス
-class CustomGATTServer:SimpleGATTServer {
-    
-    override init() {
-        super.init()
-        self.Database += [
-            // Custom service
-            PrimaryServiceAttribute(handle: 0x0020, uuid:BleUUID(uuid: "00C5E2A5-545A-4402-862E-EAA09D4C04D1")),
-            CharacteristicDeclarationAttribute(handle: 0x0021, properties: [.Read, .Notify, .Indicate], valueHandle: 0x0022, uuid: BleUUID(uuid:"01C5E2A5-545A-4402-862E-EAA09D4C04D1")),
-            CharacteristicValueDeclarationAttribute(handle: 0x0022, characteristicUUID: BleUUID(uuid:"01C5E2A5-545A-4402-862E-EAA09D4C04D1"), value: [0x00]),
-            CharactristicPresentationFormatAttribute(handle: 0x0023,
-                format: 0x04, // unsigned int8
-                exponent: 0,
-                unit: 0x27ad, //0x27AD	percentage	org.bluetooth.unit.percentage, see https://developer.bluetooth.org/gatt/units/Pages/default.aspx
-                nameSpace: 0x01, // Bluetooth SIG Assigned Numbers
-                description: 0x00),
-            ClientCharactristicConfigurationAttribute(handle: 0x0024, CharacteristicConfigurations: []),
-            //
-        ]
-        
-        
-    }
-}

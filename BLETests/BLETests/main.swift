@@ -31,29 +31,18 @@ let test = ConnectionTest()
 test.test()
 */
 
+/*
 let test = BatteryLevelServiceTest()
+test.test()
+*/
+
+
+let test = ParingAndBondingTest()
 test.test()
 
 
 /*
-
-
-let wrapper = libUSBWrapper()
-let result  = wrapper.open(0x0a12, productID: 0x01)
-println("result \(result)")
-
-var packet = [0x03, 0x0c, 0x00]
-//let code = libusb_error.LIBUSB_SUCCESS
-
-wrapper.sendCommand(
-packet,
-completed:{(result : libusb_error) in
-println("result \(result)")
-})
-
-wrapper.receiveEvent() {
-(array: [AnyObject]!, int errorCode) in
-println("received: \(array)")
-}
-
+let sm = SecurityManager()
+sm.test_c1()
+sm.test_s1()
 */

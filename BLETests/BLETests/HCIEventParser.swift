@@ -25,11 +25,18 @@ class HCIEventParser {
         case .CommandStatus:
             return HCIEventCommandStatus(packet:packet)
         case .NumberOfCompletedPackets:
-            return HCIEventNumberOfCompletedPackets(packet: packet)            
+            return HCIEventNumberOfCompletedPackets(packet: packet)
+        case .EncryptionChange:
+            return HCIEventEncryptionChange(packet: packet)
+        case .EncryptionKeyRefreshComplete:
+            return HCIEventEncryptionKeyRefreshComplete(packet: packet)
+            
         case .LowEnergyEvent:
             switch parameters[0] {
             case 0x01:
                 return HCIEventLEConnectionComplete(packet: packet)
+            case 0x05:
+                return HCIEventLELongTermKeyRequestEvent(packet: packet)
             default:
                 return HCIEvent(eventCode:event!, parameters:parameters)
             }

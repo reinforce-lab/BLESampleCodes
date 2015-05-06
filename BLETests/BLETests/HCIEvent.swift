@@ -33,14 +33,14 @@ class HCIEvent {
         self.parameters = parameters
     }
     
-    func arrayToString(packet:[UInt8]) -> String {
-        var str = "["
-        for val in packet {
-            str += String(format:"0x%02x, ", val)
+    func arrayToString(data:[UInt8]) -> String {
+        var elements:[String] = []
+        for val in data {
+            elements += [String(format:"0x%02x", val)]
         }
-        str += "]"
-
-        return str
+        let joiner = " ,"
+        
+        return "[" + joiner.join(elements) + "]"
     }
     
     func simpleDescription() -> String {

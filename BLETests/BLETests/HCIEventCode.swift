@@ -37,7 +37,7 @@ enum HCIEventCode:UInt8 {
     // Authentication and Encryption
     case EncryptionChange = 0x08
     case EncryptionKeyRefreshComplete = 0x30
-    case  AuthenticatedPayloadTimeoutExpired = 0x57
+    case AuthenticatedPayloadTimeoutExpired = 0x57
 
     // LE events
     case LowEnergyEvent = 0x3e

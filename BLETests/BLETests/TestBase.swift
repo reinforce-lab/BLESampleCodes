@@ -27,4 +27,11 @@ class TestBase {
         println("command:\(command.simpleDescription()) parameters:\(parameters) -> \(event.simpleDescription())")
         return event
     }
+    
+    // ref http://stackoverflow.com/questions/24045895/what-is-the-swift-equivalent-to-objective-cs-synchronized
+    func synchronized(lock: AnyObject!, closure: () -> ()) {
+        objc_sync_enter(lock)
+        closure()
+        objc_sync_exit(lock)
+    }
 }

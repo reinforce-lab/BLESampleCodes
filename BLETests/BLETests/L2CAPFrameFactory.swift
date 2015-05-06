@@ -166,14 +166,15 @@ class L2CAPBasicFrame {
     }
     
     func arrayToString(data:[UInt8]) -> String {
-        var str = "["
+        var elements:[String] = []
         for val in data {
-            str += String(format:"0x%02x, ", val)
+            elements += [String(format:"0x%02x", val)]
         }
-        str += "]"
+        let joiner = " ,"
         
-        return str
+        return "[" + joiner.join(elements) + "]"
     }
+
     
     func simpleDescription() -> String {
         var desc = ""

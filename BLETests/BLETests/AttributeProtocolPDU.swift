@@ -157,13 +157,13 @@ class AttributeProtocolPDU {
     }
     
     func arrayToString(data:[UInt8]) -> String {
-        var str = "["
+        var elements:[String] = []
         for val in data {
-            str += String(format:"0x%02x, ", val)
+            elements += [String(format:"0x%02x", val)]
         }
-        str += "]"
+        let joiner = " ,"
         
-        return str
+        return "[" + joiner.join(elements) + "]"
     }
     
     func simpleDescription() -> String {
@@ -515,14 +515,14 @@ class HandleValueIndication: AttributeProtocolPDU {
     init(attributeHandle:UInt16, attributeValue:[UInt8]) {
         AttributeHandle = attributeHandle
         AttributeValue  = attributeValue
+
+        super.init(opCode:.HandleValueIndication)
         
         var params = [UInt8](count:2, repeatedValue:0)
         params[0] = UInt8(AttributeHandle & 0x00ff)
         params[1] = UInt8(AttributeHandle >> 8)
-        params += AttributeValue
-        
-        super.init(opCode:.HandleValueIndication)
-        self.Parameters = AttributeValue
+
+        self.Parameters = params + AttributeValue
     }
     
     override func simpleDescription() -> String {
