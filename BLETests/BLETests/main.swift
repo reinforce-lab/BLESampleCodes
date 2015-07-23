@@ -8,23 +8,19 @@
 
 import Foundation
 
-// USBAdaptorTest
-// USB Bluetoothドングルの接続確認。
+// Test 01
+// USB Bluetoothドングルの接続確認です。
 /*
 let test = USBAdaptorTest()
 test.test()
 */
-/*
-let adaptor = BluetoothUSBAdaptor()
-let socket = HCISocket(adaptor:adaptor)
-let (eventCode, parameters) = socket.sendCommand(.Reset, parameters:[])
-println("eventCode:\(eventCode.simpleDescription()) parameters:\(parameters)")
-*/
 
-/*
+
+// Test 02
+// アドバタイジングを開始します。
 let test = AdvertisingTest()
 test.test()
-*/
+
 
 /*
 let test = ConnectionTest()
@@ -36,10 +32,10 @@ let test = BatteryLevelServiceTest()
 test.test()
 */
 
-
-let test = ParingAndBondingTest()
+/*
+let test = ParingTest()
 test.test()
-
+*/
 
 /*
 let sm = SecurityManager()

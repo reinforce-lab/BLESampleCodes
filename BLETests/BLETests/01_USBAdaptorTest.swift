@@ -14,17 +14,13 @@ class USBAdaptorTest {
         // USBドングルとのやりとりをするBluetoothUSBAdasptorのインスタンスを生成します。
         // もしもUSBドングルが見つからなければ、nilが返されます。
         let adaptor = BluetoothUSBAdaptor()
-        
-        println("Product name:\(adaptor?.productName)")
-        
-        // アダプタにリセットコマンドを送ります。
-        var packet:[UInt8] = [0x03, 0x0c, 0x00]
-        var result = adaptor.executeCommand(NSData(bytes:packet, length:packet.count))
-        
-        // コマンドの結果を受け取ります。
-        var buffer = [UInt8](count: result.length, repeatedValue:0)
-        result.getBytes(&buffer, length:result.length)
-        println("result:\(buffer)")
+        if adaptor == nil {
+            println("No USB Bluetooth dongle is found.");
+            return
+        }
+
+        // 製品名を出力します。
+        println("Product name:\(adaptor!.productName)")
     }
 }
 

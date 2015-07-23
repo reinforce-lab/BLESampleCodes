@@ -38,25 +38,24 @@ class CustomGATTServer:SimpleGATTServer {
     }
 }
 
-class ParingAndBondingTest:TestBase {
+class ParingTest:TestBase {
     let l2capFrameFactory = L2CAPFrameFactory()
     let gattServer        = CustomGATTServer()
     let securityManager   = SecurityManager()
     
     var lastNotifiedAt    = NSDate()
-    var isAuthorized = false
     
     let queue     = dispatch_queue_create("BLETest", DISPATCH_QUEUE_CONCURRENT)
 
     var isConnected = true
     var handle:UInt16 = 0
     
-    var longTermKey:[UInt8] = []
-    
     // Indicationのトランザクション実行中フラグ
     var proceedingIndicationTransaction = false
     
-    func test() -> () {
+    var longTermKey:[UInt8] = []
+    
+    override func test() -> () {
         
         // アドバタイジングを開始します
         var result = _socket.execute_startAdvertisingAndWaitingForConnection()
@@ -77,6 +76,10 @@ class ParingAndBondingTest:TestBase {
             while(true) {
                 if let event = self._socket.readEvent() {
                     self.synchronized(self) {
+                        // TODO ここのコード、綺麗に書きなおすこと
+                        if let numOfCompletedPacketEvent = event as? HCIEventNumberOfCompletedPackets {
+                        } else {
+                            
                         println("\nController -> Host\nevent:\(event.simpleDescription())")
                         if let longTermKeyRequest = event as? HCIEventLELongTermKeyRequestEvent {
                             // Long term key がなければ、short time keyを発行する
@@ -94,6 +97,7 @@ class ParingAndBondingTest:TestBase {
                         if event.eventCode == .DisconnectionComplete {
                             self.isConnected = false
                         }
+                        }
                     }
                 }
             }
@@ -108,8 +112,8 @@ class ParingAndBondingTest:TestBase {
                     if aclData != nil {
                         self.handle = aclData!.Handle
                         
-                        println("\nMaster -> Slave")
-                        println("ACL Data:\(aclData!.simpleDescription())")
+//                        println("\nMaster -> Slave")
+//                        println("ACL Data:\(aclData!.simpleDescription())")
                         
                         // L2CAPの1フレームを取得
                         let frame = self.l2capFrameFactory.parse(aclData!.Data)
@@ -119,12 +123,15 @@ class ParingAndBondingTest:TestBase {
                         let l2capframe = frame!
                         // 想定しないチャネルのフレームは無視する
                         if(l2capframe.ChannelID == .UnknownChannelID) {
-                            println("Unknonw l2cap channel ID")
+//                            println("Unknonw l2cap channel ID")
                             return // closureで呼び出しているので, returnで帰る
                         }
                         
                         // チャネルごとの処理
-                        println("L2CAP Frame:\(l2capframe.simpleDescription())")
+//                        println("L2CAP Frame:\(l2capframe.simpleDescription())")
+                        
+                        println("\nMaster -> Slave")
+                        
                         switch l2capframe.ChannelID {
                         case .AttributeProtocol:
                             let attr = AttributeProtocolPDUFactory.parseAttributeProtocolPDU(l2capframe.InformationPayload)
@@ -164,68 +171,6 @@ class ParingAndBondingTest:TestBase {
             }
         }
         
-        // ノーティフィケーションを飛ばす
-        /*
-        
-        dispatch_async(queue) {
-        // バッテリサービスのバッテリ値のCCCDを取得します
-        let batteryLevelValueDeclarationAttribute = self.gattServer.findAttribute(0x0012) as! CharacteristicValueDeclarationAttribute
-        let cccd  = self.gattServer.findAttribute(0x0014) as! ClientCharactristicConfigurationAttribute
-        
-        while true {
-        if cccd.CharacteristicConfigurations.count > 0 && cccd.CharacteristicConfigurations[0] == .Notification {
-        
-        self.synchronized(self) {
-        // バッテリ値を -1 する
-        var batteryLevel = batteryLevelValueDeclarationAttribute.Value[0]
-        batteryLevel = (batteryLevel - 1 + 100) % 100
-        batteryLevelValueDeclarationAttribute.Value = [batteryLevel]
-        
-        println("\nSlave -> Master (notification)")
-        var notification = HandleValueNotification(attributeHandle: 0x012, attributeValue: [batteryLevel])
-        println("Attribute PDU:\(notification.simpleDescription())")
-        let responseL2CAPPDU = self.l2capFrameFactory.build(.AttributeProtocol, payload: notification.PDU)
-        let responseACLData = HCIACLDataPacket(Handle:self.handle, Packet_Boundary_Flag: .FirstAutomaticallyFlushablePacket, Broadcast_Flag: 0x00, Data:responseL2CAPPDU)
-        println("ACL Data:\(responseACLData.simpleDescription())")
-        self._socket.writeACLData(responseACLData)
-        }
-        }
-        
-        sleep(1)
-        }
-        }
-        */
-        
-        /*
-        // カスタムサービスのIndicationを行う
-        dispatch_async(queue) {
-        let characteristicsValue = self.gattServer.findAttribute(0x0022) as! CharacteristicValueDeclarationAttribute
-        let cccd                 = self.gattServer.findAttribute(0x0024) as! ClientCharactristicConfigurationAttribute
-        
-        while true {
-        if !self.proceedingIndicationTransaction && cccd.CharacteristicConfigurations.count > 0 && cccd.CharacteristicConfigurations[0] == .Indication {
-        self.synchronized(self) {
-        // 値を+1する
-        var val = characteristicsValue.Value[0]
-        val = (val + 1) % 100
-        characteristicsValue.Value = [val]
-        
-        println("\nSlave -> Master (indication)")
-        var notification = HandleValueIndication(attributeHandle: 0x022, attributeValue: [val])
-        println("Attribute PDU:\(notification.simpleDescription())")
-        let responseL2CAPPDU = self.l2capFrameFactory.build(.AttributeProtocol, payload: notification.PDU)
-        let responseACLData = HCIACLDataPacket(Handle:self.handle, Packet_Boundary_Flag: .FirstAutomaticallyFlushablePacket, Broadcast_Flag: 0x00, Data:responseL2CAPPDU)
-        println("ACL Data:\(responseACLData.simpleDescription())")
-        self._socket.writeACLData(responseACLData)
-        
-        // トランザクションを開始
-        self.proceedingIndicationTransaction = true
-        }
-        }
-        sleep(1)
-        }
-        }
-        */
         // 切断を待つ
         while self.isConnected {
             usleep(10000)
@@ -266,7 +211,7 @@ class ParingAndBondingTest:TestBase {
             // 3.4.4.3 Read Request
             let request = attr as! AttributeReadRequest
             if let foundAttribute   = gattServer.findAttribute(request.AttributeHandle) {
-                if isAuthorized {
+                if self.longTermKey.count > 0 {
                     return AttributeReadResponse(AttributeValue:foundAttribute.Value)
                 } else {
                     // insufficient authentication を返す
@@ -316,7 +261,9 @@ class ParingAndBondingTest:TestBase {
         switch smp.Code {
         case .PairingRequest:
             let response = PairingResponse(IOCapability: .NoInputNoOutput, OOBDataFlag: .OOBAuthenticationDataNotPresent,
-                BondingFlags:true, MITM:true, SC:false, Keypress:false,
+                /* BondingFlags:true, */
+                BondingFlags:false,
+                MITM:true, SC:false, Keypress:false,
                 MaximumEncryptionKeySize: 16, InitiatorKeyDistribution: 0x03, /*ResponderKeyDistribution: 0x03 */ ResponderKeyDistribution: 0x01 )
             
             self.securityManager.pairingRequest  = smp as? PairingRequest

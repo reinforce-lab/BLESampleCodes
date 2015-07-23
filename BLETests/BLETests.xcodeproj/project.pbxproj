@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F820910D1AF99C7500A1B0DA /* 04_BatteryLevelServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F820910C1AF99C7500A1B0DA /* 04_BatteryLevelServiceTest.swift */; };
-		F820910F1AF9A98C00A1B0DA /* 05_ParingAndBondingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F820910E1AF9A98C00A1B0DA /* 05_ParingAndBondingTest.swift */; };
+		F820910F1AF9A98C00A1B0DA /* 05_ParingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F820910E1AF9A98C00A1B0DA /* 05_ParingTest.swift */; };
 		F82091111AFA380700A1B0DA /* SecurityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82091101AFA380700A1B0DA /* SecurityManager.swift */; };
 		F82091131AFA387E00A1B0DA /* SecurityManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82091121AFA387E00A1B0DA /* SecurityManagerProtocol.swift */; };
 		F834ECAF1ADE88ED003B5D25 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = F834ECAE1ADE88ED003B5D25 /* main.swift */; };
@@ -51,7 +51,7 @@
 
 /* Begin PBXFileReference section */
 		F820910C1AF99C7500A1B0DA /* 04_BatteryLevelServiceTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = 04_BatteryLevelServiceTest.swift; path = BLETests/04_BatteryLevelServiceTest.swift; sourceTree = "<group>"; };
-		F820910E1AF9A98C00A1B0DA /* 05_ParingAndBondingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = 05_ParingAndBondingTest.swift; path = BLETests/05_ParingAndBondingTest.swift; sourceTree = "<group>"; };
+		F820910E1AF9A98C00A1B0DA /* 05_ParingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = 05_ParingTest.swift; path = BLETests/05_ParingTest.swift; sourceTree = "<group>"; };
 		F82091101AFA380700A1B0DA /* SecurityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecurityManager.swift; sourceTree = "<group>"; };
 		F82091121AFA387E00A1B0DA /* SecurityManagerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecurityManagerProtocol.swift; sourceTree = "<group>"; };
 		F834ECAB1ADE88ED003B5D25 /* BLETests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = BLETests; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -104,7 +104,7 @@
 				F855E7AF1AE13D29009A56B3 /* 02_AdvertisingTest.swift */,
 				F83B51B41AE937F0008D8CE3 /* 03_ConnectionTest.swift */,
 				F820910C1AF99C7500A1B0DA /* 04_BatteryLevelServiceTest.swift */,
-				F820910E1AF9A98C00A1B0DA /* 05_ParingAndBondingTest.swift */,
+				F820910E1AF9A98C00A1B0DA /* 05_ParingTest.swift */,
 				F834ECAD1ADE88ED003B5D25 /* BLETests */,
 				F84AD4341AF7110700BF845C /* USBInterface */,
 				F834ECAC1ADE88ED003B5D25 /* Products */,
@@ -123,6 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				F89989CE1AE87A72003DD690 /* TestBase.swift */,
+				F834ECBC1ADE8938003B5D25 /* HCISocket.swift */,
 				F83B51B61AE93810008D8CE3 /* HCLACLDataPacket.swift */,
 				F83B51B81AE93FC8008D8CE3 /* L2CAPFrameFactory.swift */,
 				F83B51BB1AE93FF8008D8CE3 /* L2CAPSocket.swift */,
@@ -135,7 +136,6 @@
 				F89989C11AE33B6A003DD690 /* HCIEvents */,
 				F834ECB91ADE8938003B5D25 /* HCICommand.swift */,
 				F834ECBA1ADE8938003B5D25 /* HCIErrorCodes.swift */,
-				F834ECBC1ADE8938003B5D25 /* HCISocket.swift */,
 				F834ECBE1ADE8938003B5D25 /* memo.txt */,
 				F834ECB51ADE8937003B5D25 /* BLETests-Bridging-Header.h */,
 				F888D47B1AFE51E300B163E2 /* Cipher.h */,
@@ -240,7 +240,7 @@
 				F83B51BC1AE93FF8008D8CE3 /* L2CAPSocket.swift in Sources */,
 				F888D47D1AFE51E300B163E2 /* Cipher.m in Sources */,
 				F83B51C21AEE4830008D8CE3 /* AttributeRepresentation.swift in Sources */,
-				F820910F1AF9A98C00A1B0DA /* 05_ParingAndBondingTest.swift in Sources */,
+				F820910F1AF9A98C00A1B0DA /* 05_ParingTest.swift in Sources */,
 				F89989CB1AE4A048003DD690 /* HCIEventCommandStatus.swift in Sources */,
 				F834ECDA1ADE8C8D003B5D25 /* 01_USBAdaptorTest.swift in Sources */,
 				F820910D1AF99C7500A1B0DA /* 04_BatteryLevelServiceTest.swift in Sources */,

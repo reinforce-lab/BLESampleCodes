@@ -56,7 +56,7 @@ class BatteryLevelServiceTest:TestBase {
     // Indicationのトランザクション実行中フラグ
     var proceedingIndicationTransaction = false
     
-    func test() -> () {
+    override func test() -> () {
         
         // アドバタイジングを開始します
         var result = _socket.execute_startAdvertisingAndWaitingForConnection()

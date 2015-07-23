@@ -34,7 +34,7 @@ class ConnectionTest:TestBase {
     let l2capFrameFactory = L2CAPFrameFactory()
     let gattServer        = SimpleGATTServer()
     
-    func test() -> () {
+    override func test() -> () {
         // アドバタイジングを開始します
         var result = _socket.execute_startAdvertising()
         if result != .Success {

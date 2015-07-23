@@ -152,7 +152,7 @@ class SecurityManager {
         ra:[UInt8]    // 48-bit
         ) -> [UInt8] {
             
-            println("c1(k:\(k) r:\(r) preq:\(preq) pres:\(pres) iat:\(iat) rat:\(rat) ia:\(ia) ra:\(ra))")
+//            println("c1(k:\(k) r:\(r) preq:\(preq) pres:\(pres) iat:\(iat) rat:\(rat) ia:\(ia) ra:\(ra))")
             
             let p1 = pres || preq || [rat] || [iat]
             let p2 = [UInt8](count:(32 / 8), repeatedValue:0) || ia || ra
